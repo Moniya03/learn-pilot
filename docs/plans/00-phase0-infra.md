@@ -145,13 +145,18 @@ Initial queues:
 
 ## Migrations runner
 
-`infra/migrations/run.py`:
+**Deviation (2026-07-04):** instead of a centralized `infra/migrations/run.py`,
+we use a per-service `migrate.py` that runs on container startup (`sh -c "uv run
+python -m migrate && uvicorn..."`). Each service:
 
-- creates schemas: `identity`, `catalog`, `notes`, `ingestion`, `ai`;
-- creates DB roles limited to each schema;
-- runs `services/<name>/migrations/` for one or all services;
-- never grants cross-schema read/write;
-- provisions Zitadel DB separately.
+- creates its own schema `if not exists` on startup;
+- applies `services/<name>/migrations/*.sql` in sorted order;
+- uses idempotent DDL (`create if not exists`).
+
+The per-service approach is simpler (no extra orchestration binary, no cross-schema
+grants to configure), and container restarts are cheap for local dev. A centralized
+runner can still be added later if you want one-command `migrate all` — it would just
+shell out to each service's `migrate.py`.
 
 ## Task breakdown
 
@@ -159,7 +164,7 @@ Initial queues:
 |---|---|---:|:---:|---|
 | INF-1 | Restructure repo | - | S | `services/`, `shared/`, `gateway/`, `infra/` exist; old `api/` removed or marked migrated. |
 | INF-2 | Compose skeleton | INF-1 | M | `docker compose up` starts Postgres/RabbitMQ/Weaviate/MinIO/Zitadel/gateway/5 services. |
-| INF-3 | Postgres schemas/users | INF-2 | M | migrations runner creates schemas and schema-scoped users. |
+| INF-3 | Postgres schemas/migrations | INF-2 | S | `identity` schema created, migrations apply in Docker entrypoint; `asyncpg` pool scoped with `search_path`. Other 4 services adopt the same pattern when built. (**Deviation:** per-service `migrate.py` replaces centralized runner; DB roles deferred as YAGNI.) |
 | INF-4 | RabbitMQ definitions | INF-2 | M | exchange, queues, retry queues, DLX/DLQs created by config/script. |
 | INF-5 | MinIO + Weaviate bootstrap | INF-2 | M | buckets and `TranscriptChunk` collection created idempotently. |
 | INF-6 | Zitadel bootstrap | INF-2 | L | Google IdP, OIDC clients, JWKS URL, admin user configured from env. |

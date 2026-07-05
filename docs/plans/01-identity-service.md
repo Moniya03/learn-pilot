@@ -86,12 +86,12 @@ None.
 
 | ID | Task | Depends | Size | Definition of Done |
 |---|---|---:|:---:|---|
-| ID-1 | Service skeleton | INF-8 | S | FastAPI app imports shared config/auth; `/healthz` works. |
-| ID-2 | Migration | ID-1 | S | `identity.users` exists with indexes. |
-| ID-3 | Repository | ID-2 | S | upsert/find by `owner_id`, update profile, lookup by `owner_id`. |
-| ID-4 | `GET /me` find-or-create | ID-3 | M | first request creates User from headers; repeat request updates `last_login_at`. |
-| ID-5 | Profile update/lookup endpoints | ID-4 | S | PATCH and GET by owner_id return typed responses. |
-| ID-6 | Tests | ID-5 | S | header-auth test, find-or-create test, no-token-storage assertion. |
+| ID-1 ✅ | Service skeleton | INF-8 | S | FastAPI app imports shared config/auth; `/healthz` works. |
+| ID-2 ✅ | Migration | ID-1 | S | `identity.users` exists with indexes; idempotent `migrate.py` on startup. |
+| ID-3 ✅ | Repository | ID-2 | S | upsert/find by `owner_id`, update profile, lookup by `owner_id`, profile_exists. |
+| ID-4 ✅ | `GET /me` find-or-create | ID-3 | M | first request creates User from headers; repeat request updates `last_login_at`; email required (422 if missing). |
+| ID-5 ✅ | Profile update/lookup endpoints | ID-4 | S | PATCH and GET by owner_id return typed responses; PATCH creates User if /me never ran. |
+| ID-6 ✅ | Tests | ID-5 | S | `smoke.py` — 7-invariant self-check against real DB (find-or-create, last_login refresh, email change, PATCH, unique email, lookup, unknown→None). Run with `uv run python -m smoke`. |
 
 ## Cross-service dependencies
 
@@ -102,3 +102,38 @@ None.
 
 - `email` is treated as verified because Zitadel/Google handles verification.
 - User deletion/export is deferred until explicitly required.
+
+## Implementation notes (2026-07-04)
+
+All tasks complete. Key decisions and deviations:
+
+- **DB access: raw `asyncpg`, no ORM.** Justified for identity (1 table, no
+  joins, transactional outbox makes explicit SQL clearer than a unit-of-work
+  model). Catalog, notes, and ingestion each have richer schemas and may
+  benefit from SQLAlchemy 2.x async + Alembic — make that call per-service
+  when implementing. Rule: if a service has ≤2 tables and no joins, use
+  raw asyncpg; otherwise reach for SQLAlchemy. See the top-level README note
+  that left this open.
+- **Per-service `migrate.py`** instead of a centralized runner. Each service's
+  Dockerfile runs `python -m migrate` on startup — schema + DDL applied
+  idempotently. Simpler than orchestrating cross-service migration ordering;
+  the centralized `infra/migrations/run.py` in the Phase 0 plan still exists
+  as a future option.
+- **`shared/` is path-imported**, not pip-installed. No wheel, no build step.
+  Each service Dockerfile copies `shared/` and sets `PYTHONPATH=/app`.
+  Services list `fastapi`, `pydantic`, etc. as their own deps (they need them
+  anyway). This avoids the path-dependency version-skew dance inside Docker.
+- **Email is required at the trust boundary.** The plan's schema has
+  `email text not null`, but `X-User-Email` could be absent if KrakenD is
+  misconfigured. Rather than store `''` (which breaks `EmailStr` validation
+  in the response), the endpoint rejects with 422 when email is missing.
+  The plan says email is always present from KrakenD — this enforces that
+  contract explicitly instead of letting a DB-level NOT NULL violation
+  become a 500.
+- **No DB roles** (plan INF-3). For solo dev on a shared Postgres, schema
+  isolation via `search_path` is enough. Per-schema roles are YAGNI until
+  multi-team or production deployment.
+- **The POST route in KrakenD** for `/api/identity/{rest}` exists but
+  identity-service has no POST endpoints. Harmless; stays because KrakenD
+  config blocks are shared across services and identity may grow a create
+  endpoint later (e.g., admin-invited users).
