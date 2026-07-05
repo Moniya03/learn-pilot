@@ -1,0 +1,11 @@
+[project]
+name = "identity"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "asyncpg>=0.31.0",
+    "email-validator>=2.3.0",
+    "fastapi>=0.139.0",
+    "pydantic-settings>=2.14.2",
+    "uvicorn[standard]>=0.50.0",
+]
