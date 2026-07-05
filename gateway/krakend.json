@@ -1,0 +1,369 @@
+{
+  "$schema": "https://www.krakend.io/schema/v2.7/krakend.json",
+  "version": 3,
+  "name": "LearnPilot Gateway",
+  "port": 8080,
+  "timeout": "10s",
+  "endpoints": [
+    {
+      "endpoint": "/api/identity/{rest}",
+      "method": "GET",
+      "input_headers": ["Authorization"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://identity-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/identity/{rest}",
+      "method": "POST",
+      "input_headers": ["Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://identity-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/identity/{rest}",
+      "method": "PATCH",
+      "input_headers": ["Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://identity-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/catalog/{rest}",
+      "method": "GET",
+      "input_headers": ["Authorization"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://catalog-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/catalog/{rest}",
+      "method": "POST",
+      "input_headers": ["Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://catalog-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/catalog/{rest}",
+      "method": "PUT",
+      "input_headers": ["Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://catalog-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/catalog/{rest}",
+      "method": "DELETE",
+      "input_headers": ["Authorization"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://catalog-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/notes/{rest}",
+      "method": "GET",
+      "input_headers": ["Authorization"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://notes-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/notes/{rest}",
+      "method": "POST",
+      "input_headers": ["Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://notes-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/notes/{rest}",
+      "method": "PATCH",
+      "input_headers": ["Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://notes-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/notes/{rest}",
+      "method": "DELETE",
+      "input_headers": ["Authorization"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://notes-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/ingestion/{rest}",
+      "method": "GET",
+      "input_headers": ["Authorization"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://ingestion-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/ingestion/{rest}",
+      "method": "POST",
+      "input_headers": ["Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://ingestion-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/ai/{rest}",
+      "method": "GET",
+      "input_headers": ["Authorization"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://ai-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/ai/{rest}",
+      "method": "POST",
+      "input_headers": ["Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://zitadel-api:8080/oauth/v2/keys",
+          "disable_jwk_security": true,
+          "cache": true,
+          "issuer": ["http://localhost"],
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["email", "X-User-Email"]
+          ]
+        }
+      },
+      "backend": [
+        {
+          "host": ["http://ai-service:8000"],
+          "url_pattern": "/v1/{rest}"
+        }
+      ]
+    }
+  ]
+}
