@@ -1,0 +1,13 @@
+# Python
+**/.venv
+**/__pycache__/
+**/.pytest_cache/
+
+# Env / secrets
+infra/.env
+
+# Node (web/)
+**/node_modules
+
+# Agent state
+.pi/
