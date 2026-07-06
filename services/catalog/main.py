@@ -11,6 +11,7 @@ from sqlalchemy import text
 
 from config import settings
 from db.session import AsyncSessionLocal, engine
+from routes import router
 
 
 @asynccontextmanager
@@ -20,6 +21,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(title="catalog-service", lifespan=lifespan)
+app.include_router(router)
 
 
 @app.get("/healthz")
