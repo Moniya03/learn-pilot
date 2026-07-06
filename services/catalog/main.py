@@ -6,6 +6,7 @@ Routes (all behind KrakenD except /healthz):
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
+import messaging
 from fastapi import FastAPI
 from sqlalchemy import text
 
@@ -16,8 +17,12 @@ from routes import router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    yield
-    await engine.dispose()
+    await messaging.startup(app)
+    try:
+        yield
+    finally:
+        await messaging.shutdown(app)
+        await engine.dispose()
 
 
 app = FastAPI(title="catalog-service", lifespan=lifespan)
