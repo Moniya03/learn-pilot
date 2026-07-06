@@ -1,0 +1,16 @@
+[project]
+name = "catalog"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "aio-pika>=9.4",
+    "alembic>=1.14",
+    "asyncpg>=0.31",
+    "email-validator>=2.3.0",
+    "fastapi>=0.139.0",
+    "httpx>=0.28",
+    "pydantic>=2.10",
+    "pydantic-settings>=2.14.2",
+    "sqlalchemy[asyncio]>=2.0.36",
+    "uvicorn[standard]>=0.50.0",
+]
