@@ -10,6 +10,7 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str
     DB_SCHEMA: str
+    RABBITMQ_URL: str | None = None
 
     @property
     def dsn(self) -> str:
